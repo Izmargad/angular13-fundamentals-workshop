@@ -23,17 +23,41 @@ export class CoursesComponent implements OnInit {
   constructor(private coursesService: CoursesService) { }
 
   ngOnInit(): void {
-    this.courses = this.coursesService.courses;
-  }
 
-  selectCourse(course) {
+   this.fetchCourses();
+  }
+  selectCourse(course): void {
     this.selectedCourse = {...course};
     this.originalTitle = course.title;
   }
 
+fetchCourses() {
+    this.coursesService.all()
+    .subscribe((result:any) => this.courses = result);
+  }
+
+
   saveCourse(course) {
+    if (course.id) {
+      this.updateCourse(course);
+    } else {
+      this.createCourse(course);
+    }
     console.log('SAVE COURSE', course);
   }
+
+ // create
+ createCourse(course) {
+  this.coursesService.create(course)
+  .subscribe(result => this.fetchCourses())
+}
+
+  // update
+  updateCourse(course) {
+    this.coursesService.update(course)
+    .subscribe(result => this.fetchCourses())
+  }
+ 
 
   deleteCourse(courseId) {
     console.log('DELETE COURSE', courseId);
